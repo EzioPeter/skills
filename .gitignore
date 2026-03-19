@@ -16,3 +16,8 @@ __pycache__/
 
 # Environment
 .env
+
+# Output
+outputs/
+CORL_2026/
+refine-logs/
