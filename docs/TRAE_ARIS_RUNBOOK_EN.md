@@ -6,8 +6,8 @@ Use ARIS research workflows in Trae without relying on Claude Code `/skill-name`
 
 | Concept | Claude Code | Trae |
 |---|---|---|
-| Skill invocation | `/skill-name "args"` | `@skills/.../SKILL.md` + explicit action instruction in chat |
-| Skill storage | `~/.claude/skills/...` | Reference `skills/` directly or copy it into your project |
+| Skill invocation | `/skill-name "args"` (slash command) | Natural language auto-discovery, `#` quick match, `@skills/.../SKILL.md` (file reference) |
+| Skill storage | `~/.claude/skills/...` | Global `~/.trae/skills/` (cross-project available) or project `<project>/.trae/skills/` (current project only), or directly reference ARIS repo `skills/` |
 | MCP setup | `claude mcp add ...` | `Settings → MCP → Manual Add` |
 | Agent execution | Persistent CLI session | Chat/Agent session |
 | File references | Auto-read from project | Explicit `@filename` attachment |
@@ -17,17 +17,36 @@ Use ARIS research workflows in Trae without relying on Claude Code `/skill-name`
 
 It is recommended to create a dedicated Trae agent for ARIS workflows to avoid conflicts with other agents and to keep role instructions stable.
 
-### 2.1 Clone the repository
+### 2.1 Clone the repository and configure Skills
 
 ```powershell
 git clone https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep.git
 ```
 
-Important:
-- In Trae, `@skills/...` can only resolve files visible in your current workspace.
-- If your paper project is separate from the ARIS repo, choose one:
-  - Add the ARIS repo as a second workspace folder.
-  - Copy `skills/` into your current project.
+**Two ways to install Skills in Trae:**
+
+Method 1: Install via Trae UI (Recommended)
+
+1. Go to `Settings → Rules and Skills`
+2. Select "Global" or "Project" installation scope
+3. Click "Import File" and select SKILL.md files from the ARIS repo's `skills/` directory
+4. After installation, skills can be triggered via natural language
+
+> **Note:** Globally installed skills can be triggered via natural language in all projects; project-level installed skills can be triggered via natural language within that project.
+
+Method 2: Manual copy to skills directory
+
+```powershell
+# Global installation (available in all projects)
+New-Item -ItemType Directory -Path "$env:USERPROFILE\.trae\skills" -Force
+Copy-Item -Path "C:\path\to\Auto-claude-code-research-in-sleep\skills\*" -Destination "$env:USERPROFILE\.trae\skills\" -Recurse -Force
+
+# Project-level installation (available only in current project)
+New-Item -ItemType Directory -Path ".\.trae\skills" -Force
+Copy-Item -Path "C:\path\to\Auto-claude-code-research-in-sleep\skills\*" -Destination ".\.trae\skills\" -Recurse -Force
+```
+
+After installation, simply describe your needs in natural language within the corresponding scope to trigger the relevant skill.
 
 ### 2.2 Configure Codex reviewer MCP (recommended)
 
@@ -107,112 +126,130 @@ python -m venv .venv
 
 ## 3. How to Invoke Skills in Trae
 
-Three recommended approaches:
+Trae supports the following five ways to invoke Skills:
 
-### A. `@` reference SKILL.md (recommended)
+### A. Natural Language Auto-Invocation (Recommended)
 
-```text
+Describe your needs, and Trae will automatically determine and invoke relevant skills based on the skill's `description`:
+
+```
+Help me run an auto review loop for this paper
+```
+
+This is the most natural way—just describe what you want to do, and Trae will automatically match the appropriate Skills.
+
+### B. `#` Quick Match
+
+Type `#` in the chat to quickly search and invoke skills. After typing `#`, you'll see a skill list:
+
+```
+#auto-review-loop
+```
+
+### C. `@` Reference SKILL.md File
+
+Directly reference the skill file and attach an action instruction in the conversation:
+
+```
 @skills/auto-review-loop/SKILL.md
 Run the auto review loop for "factorized gap in discrete diffusion LMs".
 ```
 
-### B. Convert frequent skills into local rules
+Note: `@skills/.../SKILL.md` references only resolve if the ARIS repo (or its `skills/` folder) is part of the current Trae workspace. They will not work when the skills folder exists only in a separate workspace.
+### D. Convert Frequent Skills into Local Rules
 
-Move frequently used workflow instructions into project rules to reduce repeated manual prompts.
+Move frequently used skill instructions into project rules to reduce repeated manual pasting.
 
-### C. Direct one-off prompt
+### E. Direct One-off Prompt
 
-Paste the workflow instructions directly into chat for temporary tasks.
+Paste workflow instructions directly into chat for temporary tasks.
 
 ## 4. Workflow Mapping (Claude Flow → Trae Usage)
 
+Trae automatically discovers ARIS skills via the YAML `description` field in `SKILL.md`. Below are invocation methods for each workflow:
+
 ### Workflow 1: Idea Discovery
 
-Claude Code:
-
-```text
+**Claude Code:**
+```
 /idea-discovery "your research direction"
 ```
 
-Trae:
-
-```text
-@skills/idea-discovery/SKILL.md
-Run the full idea discovery pipeline for "your research direction".
-Sub-skills:
-1. @skills/research-lit/SKILL.md
-2. @skills/idea-creator/SKILL.md
-3. @skills/novelty-check/SKILL.md
-4. @skills/research-review/SKILL.md
-5. @skills/research-refine-pipeline/SKILL.md
+**Trae equivalent:**
 ```
+Run the full idea discovery pipeline for "your research direction".
+
+Use the following sub-skills in order:
+1. Use research-lit skill — Literature review
+2. Use idea-creator skill — Brainstorming
+3. Use novelty-check skill — Novelty verification
+4. Use research-review skill — Deep review
+5. Use research-refine-pipeline skill — Method refinement + Experiment planning
+```
+
+> **Tip:** If context is too long, split each stage into separate conversations and pass results via files (e.g., `IDEA_REPORT.md`, `refine-logs/FINAL_PROPOSAL.md`).
 
 ### Workflow 1.5: Experiment Bridge
 
-Claude Code:
-
-```text
+**Claude Code:**
+```
 /experiment-bridge
 ```
 
-Trae:
-
-```text
-@skills/experiment-bridge/SKILL.md
+**Trae equivalent:**
+```
+Use experiment-bridge skill.
 Read refine-logs/EXPERIMENT_PLAN.md and implement experiments.
-Deploy via @skills/run-experiment/SKILL.md.
+Use run-experiment skill to deploy to GPU.
 ```
 
 ### Workflow 2: Auto Review Loop
 
-Claude Code:
-
-```text
+**Claude Code:**
+```
 /auto-review-loop "your paper topic"
 ```
 
-Trae:
-
-```text
-@skills/auto-review-loop/SKILL.md
-Run the auto review loop for "your paper topic".
-Read narrative docs, memory files, and experiment results.
+**Trae equivalent:**
+```
+Use auto-review-loop skill.
+Run auto review loop for "your paper topic".
+Read project narrative docs, memory files, and experiment results.
+Use MCP tool mcp__codex__codex for external review.
 ```
 
-Notes:
-- Default reviewer tool is `mcp__codex__codex`.
-- If using llm-chat, switch to `mcp__llm-chat__chat` or use an llm-adapted skill.
+> **Note:** If using `llm-chat` MCP, replace `mcp__codex__codex` with `mcp__llm-chat__chat`. Or use the adapted skill: `auto-review-loop-llm`.
 
 ### Workflow 3: Paper Writing
 
-Claude Code:
-
-```text
+**Claude Code:**
+```
 /paper-writing "NARRATIVE_REPORT.md"
 ```
 
-Trae:
+**Trae equivalent:**
+```
+Use paper-writing skill.
+Input: NARRATIVE_REPORT.md in project root.
 
-```text
-@skills/paper-writing/SKILL.md
-@NARRATIVE_REPORT.md
-Run the full paper writing pipeline from NARRATIVE_REPORT.md.
-Sub-skills:
-1. @skills/paper-plan/SKILL.md
-2. @skills/paper-figure/SKILL.md
-3. @skills/paper-write/SKILL.md
-4. @skills/paper-compile/SKILL.md
-5. @skills/auto-paper-improvement-loop/SKILL.md
+Use the following sub-skills in order:
+1. Use paper-plan skill — Outline + claims-evidence matrix
+2. Use paper-figure skill — Generate figures
+3. Use paper-write skill — Write LaTeX sections
+4. Use paper-compile skill — Compile PDF
+5. Use auto-paper-improvement-loop skill — Review and polish
 ```
 
 ### Full Pipeline Staging
 
-| Stage | Execution in Trae | Main outputs |
-|---|---|---|
-| 1 | `@skills/idea-discovery/SKILL.md` | `IDEA_REPORT.md`, `refine-logs/FINAL_PROPOSAL.md`, `refine-logs/EXPERIMENT_PLAN.md` |
-| 2 | `@skills/experiment-bridge/SKILL.md` | Experiment scripts and results |
-| 3 | `@skills/auto-review-loop/SKILL.md` | `AUTO_REVIEW.md` |
-| 4 | `@skills/paper-writing/SKILL.md` + `@NARRATIVE_REPORT.md` | `paper/` |
+| Stage | Execution | Output Files |
+|--------|-----------|--------------|
+| 1 | Idea Discovery: Use `idea-discovery` skill + research direction | `IDEA_REPORT.md`, `refine-logs/FINAL_PROPOSAL.md`, `refine-logs/EXPERIMENT_PLAN.md` |
+| 2 | Experiment Bridge: Use `experiment-bridge` skill | Experiment scripts and results |
+| 3 | Auto Review: Use `auto-review-loop` skill | `AUTO_REVIEW.md` |
+| 4 | Paper Writing: Use `paper-writing` skill + `NARRATIVE_REPORT.md` | `paper/` directory |
+
+Each stage reads output files from the previous stage, so context can be passed across different conversations.
 
 ## 5. MCP Tool Calls Mapping
 
@@ -254,36 +291,39 @@ Deploy: python train.py --lr 1e-4 --epochs 100
 
 | Limitation | Workaround |
 |---|---|
-| No `/skill-name` slash command | Use `@skills/.../SKILL.md` |
+| Natural language invocation depends on skill `description` quality | Ensure skills' YAML frontmatter description accurately describes applicable scenarios |
 | Context pressure in long workflows | Split by stages and pass artifacts via files |
 | No auto-compact resume | Resume using state files |
 | `$ARGUMENTS` not auto-injected | Write explicit arguments in prompt |
 | Sub-skills in SKILL.md still use slash syntax | Explicitly list `@skills/...` sub-skills in Trae prompt |
 
-## 9. Quick Reference (Copy-Paste for Trae)
+## 9. Quick Reference
 
-```text
-@skills/research-lit/SKILL.md
-Search papers on "discrete diffusion models".
+```
+# Literature review
+Use research-lit skill to search papers on "discrete diffusion models".
+
+# Idea Discovery (full pipeline)
+Use idea-discovery skill for "factorized gap in discrete diffusion LMs".
+
+# Single deep review
+Use research-review skill to review my research: [description or file reference].
+
+# Auto review loop
+Use auto-review-loop skill. Topic: "your paper topic".
+
+# Paper writing
+Use paper-writing skill based on NARRATIVE_REPORT.md.
+
+# Deploy experiment
+Use run-experiment skill. Deploy: python train.py --lr 1e-4 --epochs 100
 ```
 
-```text
-@skills/idea-discovery/SKILL.md
-Run idea discovery for "factorized gap in discrete diffusion LMs".
-```
+## 10. Migration Checklist: Claude Code → Trae
 
-```text
-@skills/auto-review-loop/SKILL.md
-Run auto review loop. Topic: "your paper topic".
-```
-
-```text
-@skills/paper-writing/SKILL.md
-@NARRATIVE_REPORT.md
-Write the paper from this narrative report.
-```
-
-```text
-@skills/run-experiment/SKILL.md
-Deploy: python train.py --lr 1e-4 --epochs 100
-```
+- [ ] Go to `Settings → Rules and Skills`, select "Global" or "Project" installation scope
+- [ ] Import ARIS skills' SKILL.md files
+- [ ] Configure MCP server in `Settings → MCP`
+- [ ] Use natural language to describe needs and trigger skills
+- [ ] Verify MCP tools are available (codex or llm-chat)
+- [ ] Quick test: `Use research-review skill to review my project`
