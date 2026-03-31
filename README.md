@@ -88,6 +88,10 @@ Two outputs: `PASTE_READY.txt` (exact char count, paste to venue) + `REBUTTAL_DR
 
 ## 📢 What's New
 
+- **2026-03-30** — ![NEW](https://img.shields.io/badge/NEW-red?style=flat-square) 🔥 **Auto-debug & exhaust-before-surrender** — experiment-bridge now auto-diagnoses failures (OOM, import, path, CUDA, NaN) and retries up to 3× before giving up. auto-review-loop must try 2+ solution paths before conceding any reviewer concern. Inspired by [PUA](https://github.com/tanweai/pua)
+- **2026-03-30** — ![NEW](https://img.shields.io/badge/NEW-red?style=flat-square) ☁️ **[Vast.ai GPU rental](skills/vast-gpu/SKILL.md)** — no GPU? `gpu: vast` in CLAUDE.md, ARIS auto-rents cheapest GPU, runs experiment, destroys when done. Community contribution by [@YIHONG-JIN](https://github.com/YIHONG-JIN). 🔧 **MiniMax M2.7 upgrade** — API URL fix + model upgrade + tests. By [@octo-patch](https://github.com/octo-patch)
+- **2026-03-27** — ![NEW](https://img.shields.io/badge/NEW-red?style=flat-square) 📄 **IEEE venue support** — `IEEE_JOURNAL` (TPAMI/TIP/TNNLS) + `IEEE_CONF` (ICC/GLOBECOM/INFOCOM/ICASSP). Official IEEEtran templates. **9 venue families now.** 🔎 **[Semantic Scholar](skills/semantic-scholar/SKILL.md)** — search published venue papers beyond arXiv (`— sources: semantic-scholar`). Community contributions by [@ypd666](https://github.com/ypd666)
+- **2026-03-26** — ![NEW](https://img.shields.io/badge/NEW-red?style=flat-square) 📄 **Document-based input** — drop a `RESEARCH_BRIEF.md` in your project, `/idea-discovery` and `/research-pipeline` auto-detect it. No more squeezing complex research directions into one line. [Template](templates/RESEARCH_BRIEF_TEMPLATE.md)
 - **2026-03-24** — ![NEW](https://img.shields.io/badge/NEW-red?style=flat-square) 📝 **[Workflow 4: `/rebuttal`](skills/rebuttal/SKILL.md)** — post-submission rebuttal pipeline. Parse reviews → atomize → strategy → draft → safety check → GPT-5.4 stress test → finalize (strict + rich versions) → follow-up rounds. 3 safety gates (no fabrication, no overpromise, full coverage). `quick mode` for analysis only. `auto experiment` for supplementary experiments. Designed from 5 successful rebuttal case studies + 3 rounds GPT-5.4 xhigh design review
 - **2026-03-23** — ![NEW](https://img.shields.io/badge/NEW-red?style=flat-square) 🔧 **3 skills integrated into core workflows**: `/training-check`, `/result-to-claim`, `/ablation-planner`. 📦 **`compact` mode** — generate lean summary files for short-context models and session recovery (`— compact: true`). 🔄 **research-refine checkpoint** — auto-resume after interruption. Community contributions by [@JingxuanKang](https://github.com/JingxuanKang) & [@couragec](https://github.com/couragec)
 - **2026-03-22** — ![NEW](https://img.shields.io/badge/NEW-red?style=flat-square) 📋 **[Templates](templates/)** — input templates for every workflow. 📄 **7 venue templates** — CVPR, ACL, AAAI, ACM MM added. 🛡️ **Anti-hallucination fix** — Workflow 2 enforces DBLP → CrossRef → [VERIFY]. 🔗 **`base repo`** — clone a GitHub repo as base codebase (`— base repo: https://github.com/org/project`)
@@ -103,7 +107,7 @@ Two outputs: `PASTE_READY.txt` (exact char count, paste to venue) + `REBUTTAL_DR
 - **2026-03-17** — 🔧 Git code sync + 🆓 ModelScope guide + parameter pass-through
 
 - **2026-03-16** — 🔬 **[`research-refine`](skills/research-refine/SKILL.md)** + [`experiment-plan`](skills/experiment-plan/SKILL.md) — turn vague ideas into problem-anchored proposals with claim-driven experiment roadmaps. Now integrated into Workflow 1 (`/idea-discovery`). Community contribution by [@zjYao36](https://github.com/zjYao36)
-- **2026-03-16** — 🇨🇳 **[Alibaba Coding Plan guide](docs/ALI_CODING_PLAN_GUIDE.md)** — one API key, 4 models (Kimi-K2.5 + Qwen3.5+ + GLM-5 + MiniMax-M2.5), dual-endpoint setup. Community contribution by [@tianhao909](https://github.com/tianhao909)
+- **2026-03-16** — 🇨🇳 **[Alibaba Coding Plan guide](docs/ALI_CODING_PLAN_GUIDE.md)** — one API key, 4 models (Kimi-K2.5 + Qwen3.5+ + GLM-5 + MiniMax-M2.7), dual-endpoint setup. Community contribution by [@tianhao909](https://github.com/tianhao909)
 - **2026-03-15** — 🔀 **Bring your own model!** [Any OpenAI-compatible API](#-alternative-model-combinations) now works as reviewer via [`llm-chat`](mcp-servers/llm-chat/) MCP server. GLM, MiniMax, Kimi, LongCat, DeepSeek all tested — **zero Claude or OpenAI API needed**
 - **2026-03-15** — 🐾 **[OpenClaw adaptation guide](docs/OPENCLAW_ADAPTATION.md)** — use ARIS research workflows in [OpenClaw](https://github.com/All-Hands-AI/OpenHands) without Claude Code slash skills
 - **2026-03-15** — 📐 **[`proof-writer`](skills/proof-writer/SKILL.md)** — community skill for rigorous theorem proof drafting. 📚 **Anti-hallucination citations** — `/paper-write` now fetches real BibTeX from [DBLP](https://dblp.org)/[CrossRef](https://www.crossref.org) instead of LLM-generated entries — on by default, zero install
@@ -145,7 +149,7 @@ claude
 > |-----------|---------|-------------|
 > | `AUTO_PROCEED` | `true` | Auto-continue at idea selection gate. Set `false` to manually pick which idea to pursue before committing GPU time |
 > | `human checkpoint` | `false` | Pause after each review round so you can read the score, give custom modification instructions, skip specific fixes, or stop early |
-> | `sources` | `all` | Which literature sources to search: `zotero`, `obsidian`, `local`, `web`, or `all` (comma-separated) |
+> | `sources` | `all` | Which literature sources to search: `zotero`, `obsidian`, `local`, `web`, `semantic-scholar`, or `all`. Note: `semantic-scholar` must be explicitly listed — not included in `all` |
 > | `arxiv download` | `false` | Download top relevant arXiv PDFs during literature survey. When `false`, only fetches metadata (title, abstract, authors) |
 > | `DBLP_BIBTEX` | `true` | Fetch real BibTeX from [DBLP](https://dblp.org)/[CrossRef](https://www.crossref.org) instead of LLM-generated entries. Eliminates hallucinated citations. Zero install |
 > | `code review` | `true` | GPT-5.4 xhigh reviews experiment code before GPU deployment. Set `false` to skip |
@@ -153,6 +157,7 @@ claude
 > | `illustration` | `gemini` | AI illustration in Workflow 3: `gemini` (default, needs `GEMINI_API_KEY`), `mermaid` (free), or `false` (skip) |
 > | `venue` | `ICLR` | Target venue: `ICLR`, `NeurIPS`, `ICML`, `CVPR`, `ACL`, `AAAI`, `ACM`. Determines LaTeX style file and page limit |
 > | `base repo` | `false` | GitHub repo URL to clone as base codebase (e.g., `— base repo: https://github.com/org/project`). No code? Build on top of an open-source project |
+> | `gpu` | `local` | GPU target: `local` (default), `remote` (SSH server), or `vast` (rent on-demand from [Vast.ai](https://vast.ai) — auto-provision, auto-destroy) |
 > | `compact` | `false` | Generate compact summary files (`IDEA_CANDIDATES.md`, `findings.md`, `EXPERIMENT_LOG.md`) for short-context models and session recovery |
 > | `ref paper` | `false` | Reference paper to build on (PDF path or arXiv URL). Summarized first, then ideas extend/improve it. Combine with `base repo` for paper+code workflows |
 >
@@ -181,7 +186,7 @@ See [full setup guide](#%EF%B8%8F-setup) for details and [alternative model comb
 - 📝 **Paper writing** — narrative → outline → figures → LaTeX → PDF → auto-review (4/10 → 8.5/10), one command. Anti-hallucination citations via [DBLP](https://dblp.org)/[CrossRef](https://www.crossref.org)
 - 🤖 **Cross-model collaboration** — Claude Code executes, GPT-5.4 xhigh reviews. Adversarial, not self-play
 - 📝 **Peer review** — review others' papers as a conference reviewer, with structured scoring and meta-review
-- 🖥️ **Review-driven experiments** — when GPT-5.4 says "run an ablation", Claude Code automatically writes the script, rsyncs to your GPU server, launches in screen, collects results, and folds them back into the paper. Just configure your server in `CLAUDE.md` ([setup guide](#%EF%B8%8F-gpu-server-setup-for-auto-experiments))
+- 🖥️ **Review-driven experiments** — when GPT-5.4 says "run an ablation", Claude Code automatically writes the script, rsyncs to your GPU server, launches in screen, collects results, and folds them back into the paper. Just configure your server in `CLAUDE.md` ([setup guide](#%EF%B8%8F-gpu-server-setup-for-auto-experiments)). **No GPU?** Use `gpu: vast` to rent one from [Vast.ai](https://vast.ai) on demand
 - 🔀 **Flexible models** — default Claude × GPT-5.4, also supports [GLM, MiniMax, Kimi, LongCat, DeepSeek, etc.](#-alternative-model-combinations) — no Claude or OpenAI API required
 - 🛑 **Human-in-the-loop** — configurable checkpoints at key decisions. `AUTO_PROCEED=true` for full autopilot, `false` to approve each step
 - 📱 **[Feishu/Lark notifications](#-feishulark-integration-optional)** — three modes: **off (default, strongly recommended for most users)**, push-only (webhook, mobile alerts), interactive (approve/reject from Feishu). Zero impact when unconfigured
@@ -278,7 +283,7 @@ Domain-specific skills and external projects contributed by the community. PRs w
 | 🖱️ [Cursor Adaptation Guide](docs/CURSOR_ADAPTATION.md) | General | Use ARIS skills in [Cursor](https://www.cursor.com/) — `@`-reference skills, MCP setup, workflow mapping, state file recovery across sessions |
 | 🖥️ [Trae Adaptation Guide](docs/TRAE_ARIS_RUNBOOK_EN.md) | General | Use ARIS skills in [Trae](https://www.trae.ai/) (ByteDance AI IDE) — EN + CN guides |
 | 🎨 [`paper-illustration`](skills/paper-illustration/SKILL.md) | General | AI-generated architecture diagrams via Gemini. Built on [PaperBanana](https://github.com/dwzhu-pku/PaperBanana). Integrated into Workflow 3 |
-| 🤖 [`skills-codex`](skills/skills-codex/) | General | Full ARIS skill set mirrored for Codex CLI, including `experiment-bridge`, `grant-proposal`, and `paper-illustration` |
+| 🤖 [`skills-codex`](skills/skills-codex/) | General | Codex CLI sync pack for the main research skills, now including `training-check`, `result-to-claim`, `ablation-planner`, `rebuttal`, plus the `shared-references/` support directory |
 | 🎛️ [auto-hparam-tuning](https://github.com/zxh0916/auto-hparam-tuning) | General | Automatic hyperparameter tuning — AI agent reads project, plans strategy, runs experiments, analyzes TensorBoard, learns from results. Hydra-based |
 | 🔁 [Codex+Claude Review Bridge](docs/CODEX_CLAUDE_REVIEW_GUIDE.md) | General | Codex executes + Claude reviews via local `claude-review` MCP bridge with async polling |
 
@@ -456,7 +461,7 @@ Already have an experiment plan (from Workflow 1 or your own)? `/experiment-brid
 │   /novelty-check — verify idea isn't already published       │
 │                                                              │
 │   Supporting skills:                                         │
-│   /run-experiment    — deploy to local/remote GPU            │
+│   /run-experiment    — deploy to local/remote/vast.ai GPU     │
 │   /analyze-results   — interpret experiment outputs          │
 │   /monitor-experiment — check progress, collect results      │
 └─────────────────────────────────────────────────────────────┘
@@ -680,8 +685,9 @@ Got reviews back? `/rebuttal` parses them, builds a strategy, and drafts a venue
 | Skill | Description | Codex MCP? |
 |-------|-------------|:---:|
 | 🔗 **[`experiment-bridge`](skills/experiment-bridge/SKILL.md)** | Read experiment plan → implement code → sanity check → deploy to GPU → collect initial results | No |
-| ├ 🚀 [`run-experiment`](skills/run-experiment/SKILL.md) | Deploy experiments to local (MPS/CUDA) or remote GPU servers | No |
-| └ 👀 [`monitor-experiment`](skills/monitor-experiment/SKILL.md) | Monitor running experiments, check progress, collect results | No |
+| ├ 🚀 [`run-experiment`](skills/run-experiment/SKILL.md) | Deploy experiments to local, remote, or [Vast.ai](https://vast.ai) GPU (`gpu: local/remote/vast`) | No |
+| ├ 👀 [`monitor-experiment`](skills/monitor-experiment/SKILL.md) | Monitor running experiments, check progress, collect results | No |
+| └ ☁️ [`vast-gpu`](skills/vast-gpu/SKILL.md) | Rent, manage, and destroy on-demand GPU instances from [Vast.ai](https://vast.ai) | No |
 
 ### 🔁 Workflow 2: Auto Research Loop
 
@@ -690,7 +696,7 @@ Got reviews back? `/rebuttal` parses them, builds a strategy, and drafts a venue
 | 🔁 **[`auto-review-loop`](skills/auto-review-loop/SKILL.md)** | **Pipeline orchestrator** — autonomous review→fix→re-review (max 4 rounds) | Yes |
 | ├ 🔬 [`research-review`](skills/research-review/SKILL.md) | Deep review from external LLM (shared with Workflow 1) | Yes |
 | ├ 🔍 [`novelty-check`](skills/novelty-check/SKILL.md) | Verify novelty when reviewer suggests new directions | Yes |
-| ├ 🚀 [`run-experiment`](skills/run-experiment/SKILL.md) | Deploy experiments to local (MPS/CUDA) or remote GPU servers | No |
+| ├ 🚀 [`run-experiment`](skills/run-experiment/SKILL.md) | Deploy experiments to local, remote, or [Vast.ai](https://vast.ai) GPU (`gpu: local/remote/vast`) | No |
 | ├ 📊 [`analyze-results`](skills/analyze-results/SKILL.md) | Analyze experiment results, compute statistics, generate insights | No |
 | └ 👀 [`monitor-experiment`](skills/monitor-experiment/SKILL.md) | Monitor running experiments, check progress, collect results | No |
 | 🔁 [`auto-review-loop-llm`](skills/auto-review-loop-llm/SKILL.md) | Same as above, but uses any OpenAI-compatible API via [`llm-chat`](mcp-servers/llm-chat/) MCP server | No |
@@ -718,6 +724,7 @@ Got reviews back? `/rebuttal` parses them, builds a strategy, and drafts a venue
 | Skill | Description | Codex MCP? |
 |-------|-------------|:---:|
 | 📄 [`arxiv`](skills/arxiv/SKILL.md) | Search, download, and summarize arXiv papers. Standalone or `/research-lit` supplement | No |
+| 🔎 [`semantic-scholar`](skills/semantic-scholar/SKILL.md) | Search published venue papers (IEEE, ACM, Springer) via Semantic Scholar API. Citation counts, venue metadata, TLDR | No |
 | 🎨 [`pixel-art`](skills/pixel-art/SKILL.md) | Generate pixel art SVG illustrations for READMEs, docs, or slides | No |
 | 📱 [`feishu-notify`](skills/feishu-notify/SKILL.md) | [Feishu/Lark](#-feishulark-integration-optional) push (webhook) or interactive (bidirectional). Off by default | No |
 
@@ -831,11 +838,13 @@ To run the auto-review loop without clicking permission prompts, add to `.claude
 
 When GPT-5.4 says "run an ablation study" or "add a baseline comparison", Claude Code automatically writes the experiment script and deploys it to your GPU server. For this to work, Claude Code needs to know your server environment.
 
-Add your server info to your project's `CLAUDE.md`:
+Three GPU modes are supported — pick one and add it to your project's `CLAUDE.md`:
+
+#### Option A: Remote SSH Server (`gpu: remote`)
 
 ```markdown
 ## Remote Server
-
+- gpu: remote
 - SSH: `ssh my-gpu-server` (key-based auth, no password)
 - GPU: 4x A100
 - Conda env: `research` (Python 3.10 + PyTorch)
@@ -846,10 +855,12 @@ Add your server info to your project's `CLAUDE.md`:
 
 Claude Code reads this and knows how to SSH in, activate the environment, and launch experiments. GPT-5.4 (the reviewer) only decides **what** experiments to run — Claude Code figures out **how** based on your `CLAUDE.md`.
 
+#### Option B: Local GPU (`gpu: local`)
+
 If you are already on the GPU server, you can add the following to your `CLAUDE.md`:
 ```markdown
 ## GPU Environment
-
+- gpu: local
 - This machine has direct GPU access (no SSH needed)
 - GPU: 4x A100 80GB
 - Experiment environment: `YOUR_CONDA_ENV` (Python 3.x + PyTorch)
@@ -857,7 +868,56 @@ If you are already on the GPU server, you can add the following to your `CLAUDE.
 - Code directory: `/home/YOUR_USERNAME/YOUR_CODE_DIRECTORY/`
 ```
 
-**No server?** The review and rewriting skills still work without GPU access. Only experiment-related fixes will be skipped (flagged for manual follow-up).
+#### Option C: Vast.ai On-Demand GPU (`gpu: vast`)
+
+No GPU? Rent one from [Vast.ai](https://vast.ai) on demand. ARIS **analyzes your training task** (model size, dataset, estimated time), searches for the cheapest GPU that fits, and presents options with **estimated total cost** — not just $/hr. After you pick, it handles everything: rent → setup → run → collect results → destroy.
+
+**Prerequisites:**
+
+1. **Create a Vast.ai account** at https://cloud.vast.ai/ and add billing (credit card or crypto)
+
+2. **Install the `vastai` CLI** (requires **Python ≥ 3.10**):
+   ```bash
+   pip install vastai
+   ```
+   If your Python is older (check with `python --version`), use a virtual environment with Python ≥ 3.10 (e.g., `conda create`, `pyenv`, `uv venv`, etc.).
+
+3. **Set your API key** — get it from https://cloud.vast.ai/cli/:
+   ```bash
+   vastai set api-key YOUR_API_KEY
+   ```
+
+4. **Upload your SSH public key** at https://cloud.vast.ai/manage-keys/ — this is **required before renting any instance** (keys are baked in at creation time). If you don't have one:
+   ```bash
+   ssh-keygen -t ed25519 -C "your_email@example.com"
+   cat ~/.ssh/id_ed25519.pub   # copy this to Vast.ai
+   ```
+
+5. **Verify setup** — test that search works:
+   ```bash
+   vastai search offers 'gpu_ram>=24 reliability>0.95' -o 'dph+' --limit 3
+   ```
+
+**Add to `CLAUDE.md`:**
+```markdown
+## Vast.ai
+- gpu: vast                  # rent on-demand GPU from vast.ai
+- auto_destroy: true         # auto-destroy after experiment completes (default)
+- max_budget: 5.00           # optional: warn if estimated cost exceeds this
+```
+
+That's it — no GPU model or hardware config needed. When you run `/run-experiment`, ARIS reads your experiment scripts/plan, estimates VRAM and training time, and presents options like:
+
+```
+| # | GPU       | VRAM  | $/hr  | Est. Hours | Est. Total | Offer ID |
+|---|-----------|-------|-------|------------|------------|----------|
+| 1 | RTX 4090  | 24 GB | $0.28 | ~4h        | ~$1.12     | 6995713  |  ← best value
+| 2 | A100 SXM  | 80 GB | $0.95 | ~2h        | ~$1.90     | 7023456  |  ← fastest
+```
+
+Pick a number and it handles the rest. Use `/vast-gpu` directly for manual control.
+
+**No server at all?** The review and rewriting skills still work without GPU access. Only experiment-related fixes will be skipped (flagged for manual follow-up).
 
 </details>
 
@@ -1124,6 +1184,7 @@ Now skills will:
 | `/auto-review-loop` | Review scored (each round), loop complete | Score + verdict | + wait for continue/stop |
 | `/auto-paper-improvement-loop` | Review scored, all rounds done | Score progression | Score progression |
 | `/run-experiment` | Experiments deployed | GPU assignment + ETA | GPU assignment + ETA |
+| `/vast-gpu` | Instance rented/destroyed | Instance ID + cost | Instance ID + cost |
 | `/monitor-experiment` | Results collected | Results table | Results table |
 | `/idea-discovery` | Phase transitions, final report | Summary at each phase | + approve/reject at checkpoints |
 | `/research-pipeline` | Stage transitions, pipeline done | Stage summary | + approve/reject |
@@ -1161,6 +1222,7 @@ Skills are plain Markdown files. Fork and customize:
 | `WANDB` | false | Auto-add W&B logging to experiments | → `experiment-bridge` → `run-experiment` |
 | `CODE_REVIEW` | true | GPT-5.4 reviews experiment code before deployment | → `experiment-bridge` |
 | `BASE_REPO` | false | GitHub repo URL to clone as base codebase for experiments | → `experiment-bridge` |
+| `GPU` | `local` | GPU target: `local`, `remote` (SSH), or `vast` ([Vast.ai](https://vast.ai) on-demand rental) | → `experiment-bridge` → `run-experiment` |
 | `COMPACT` | false | Generate compact summary files for short-context models and session recovery | → all workflows |
 | `REF_PAPER` | false | Reference paper (PDF path or URL) to base ideas on. Summarized first, then used as context | → `idea-discovery` |
 | `ILLUSTRATION` | `gemini` | AI illustration: `gemini` (default), `mermaid` (free), or `false` (skip) | → `paper-writing` |
@@ -1207,7 +1269,7 @@ Override inline: `/experiment-bridge — base repo: https://github.com/org/proje
 |----------|---------|-------------|
 | `PAPER_LIBRARY` | `papers/`, `literature/` | Local directories to scan for PDFs before searching online |
 | `MAX_LOCAL_PAPERS` | 20 | Max local PDFs to scan (first 3 pages each) |
-| `SOURCES` | `all` | Which sources to search: `zotero`, `obsidian`, `local`, `web`, or `all` (comma-separated) |
+| `SOURCES` | `all` | Which sources to search: `zotero`, `obsidian`, `local`, `web`, `semantic-scholar`, or `all`. `semantic-scholar` must be explicitly listed |
 | `ARXIV_DOWNLOAD` | false | When `true`, download top relevant arXiv PDFs to PAPER_LIBRARY after search |
 | `ARXIV_MAX_DOWNLOAD` | 5 | Maximum number of PDFs to download when `ARXIV_DOWNLOAD = true` |
 
@@ -1218,9 +1280,9 @@ Override inline: `/research-lit "topic" — sources: zotero, web`, `/research-li
 | Constant | Default | Description |
 |----------|---------|-------------|
 | `DBLP_BIBTEX` | true | Fetch real BibTeX from DBLP/CrossRef instead of LLM-generated entries |
-| `TARGET_VENUE` | `ICLR` | Target venue: `ICLR`, `NeurIPS`, `ICML`, `CVPR`, `ACL`, `AAAI`, `ACM` |
-| `ANONYMOUS` | true | Use anonymous author block for blind review |
-| `MAX_PAGES` | 9 | Main body page limit (excluding references) |
+| `TARGET_VENUE` | `ICLR` | Target venue: `ICLR`, `NeurIPS`, `ICML`, `CVPR`, `ACL`, `AAAI`, `ACM`, `IEEE_JOURNAL`, `IEEE_CONF` |
+| `ANONYMOUS` | true | Use anonymous author block for blind review. Note: most IEEE venues are NOT anonymous — set `false` for IEEE |
+| `MAX_PAGES` | 9 | Page limit. ML conferences: main body excl. refs. IEEE: total pages incl. refs |
 | `ILLUSTRATION` | `gemini` | AI illustration mode: `gemini` (default, needs `GEMINI_API_KEY`), `mermaid` (free), or `false` (skip) |
 
 Override inline: `/paper-write — target venue: NeurIPS, illustration: mermaid`
@@ -1244,9 +1306,9 @@ Don't have Claude / OpenAI API access? You can swap in other models — same cro
 |---|----------|----------|:---:|:---:|-------|
 | **Default** ⭐ | Claude Opus/Sonnet | GPT-5.4 (Codex MCP) | Yes | Yes | [Quick Start](#-quick-start) |
 | **Alt A** | GLM-5 (Z.ai) | GPT-5.4 (Codex MCP) | No | Yes | [Setup below](#alt-a-glm--gpt) |
-| **Alt B** | GLM-5 (Z.ai) | MiniMax-M2.5 | No | No | [MINIMAX_MCP_GUIDE](docs/MINIMAX_MCP_GUIDE.md) |
+| **Alt B** | GLM-5 (Z.ai) | MiniMax-M2.7 | No | No | [MINIMAX_MCP_GUIDE](docs/MINIMAX_MCP_GUIDE.md) |
 | **Alt C** | Any CC-compatible | Any OpenAI-compatible | No | No | [LLM_API_MIX_MATCH_GUIDE](docs/LLM_API_MIX_MATCH_GUIDE.md) |
-| **Alt D** | Kimi-K2.5 / Qwen3.5+ | GLM-5 / MiniMax-M2.5 | No | No | [ALI_CODING_PLAN_GUIDE](docs/ALI_CODING_PLAN_GUIDE.md) |
+| **Alt D** | Kimi-K2.5 / Qwen3.5+ | GLM-5 / MiniMax-M2.7 | No | No | [ALI_CODING_PLAN_GUIDE](docs/ALI_CODING_PLAN_GUIDE.md) |
 | **Alt E** 🆓 | DeepSeek-V3.1 / Qwen3-Coder | DeepSeek-R1 / Qwen3-235B | No | No | [MODELSCOPE_GUIDE](docs/MODELSCOPE_GUIDE.md) |
 | **Alt F** | Codex CLI (GPT-5.4) | Codex `spawn_agent` (GPT-5.4) | No | Yes | [skills-codex/](skills/skills-codex/) |
 | **Alt G** 🆕 | Codex CLI | Claude Code CLI (`claude-review` MCP) | No* | No* | [CODEX_CLAUDE_REVIEW_GUIDE](docs/CODEX_CLAUDE_REVIEW_GUIDE.md) |
@@ -1352,7 +1414,7 @@ claude
 - [ ] **Daemon mode** — auto-restart Claude Code session via `launchd`/`systemd` for true unattended operation. Currently the orchestration layer requires an active CLI session; state files (`REVIEW_STATE.json`, `AUTO_REVIEW.md`) support resuming across sessions, but relaunch is manual ([#11](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep/issues/11))
 - [ ] **Reference-style figure generation** — read figures from reference PDFs → identify chart type, color scheme, layout → generate same-style figures with your own data. Sub-goal remaining: **Data charts** (extract color/font style → matplotlib rcParams). Method diagrams ✅ solved by `paper-illustration`
 - [ ] **Workflow execution report** — after each workflow (1/1.5/2/3) completes, auto-generate a structured summary: what was done, key decisions made, experiments run, results obtained, scores, and time spent. Output as `WORKFLOW_REPORT.md` for progress tracking, team reporting, and supervisor updates
-- [ ] **Document-based pipeline input** — support passing a detailed document (e.g., `RESEARCH_BRIEF.md`) as input to `/research-pipeline` or `/idea-discovery` instead of a one-line prompt. Many research directions need nuanced context (prior results, constraints, domain knowledge) that can't fit in a single sentence. The document would be parsed for problem definition, constraints, existing results, and specific requirements
+- [x] **Document-based pipeline input** — `/idea-discovery` and `/research-pipeline` auto-detect `RESEARCH_BRIEF.md` in project root. Detailed context replaces one-line prompt. Template: `templates/RESEARCH_BRIEF_TEMPLATE.md`
 - [ ] **Auto hyperparameter tuning skill** — rewrite [auto-hparam-tuning](https://github.com/zxh0916/auto-hparam-tuning) as an ARIS SKILL.md. 5-step cycle: understand project → plan tuning strategy → run experiments → analyze metrics (TensorBoard/W&B) → learn and iterate. Would plug into Workflow 1.5 (`/experiment-bridge`) or Workflow 2 (`/auto-review-loop`) when reviewer says "tune hyperparameters"
 
 ## 💬 Community
@@ -1381,7 +1443,7 @@ If you use ARIS in your research, please cite:
 
 ![GitHub stars](https://img.shields.io/github/stars/wanshuiyin/Auto-claude-code-research-in-sleep?style=social)
 
-[![Star History Chart](https://api.star-history.com/svg?repos=wanshuiyin/Auto-claude-code-research-in-sleep&type=Date&v=20260321)](https://star-history.com/#wanshuiyin/Auto-claude-code-research-in-sleep&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=wanshuiyin/Auto-claude-code-research-in-sleep&type=Date&v=20260328)](https://star-history.com/#wanshuiyin/Auto-claude-code-research-in-sleep&Date)
 
 ## 🙏 Acknowledgements
 

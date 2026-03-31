@@ -229,6 +229,7 @@ When loop ends (positive assessment or max rounds):
 - Be honest — include negative results and failed experiments
 - Do NOT hide weaknesses to game a positive score
 - Implement fixes BEFORE re-reviewing (don't just promise to fix)
+- **Exhaust before surrendering** — before marking any reviewer concern as "cannot address": (1) try at least 2 different solution paths, (2) for experiment issues, adjust hyperparameters or try an alternative baseline, (3) for theory issues, provide a weaker version of the result or an alternative argument, (4) only then concede narrowly and bound the damage. Never give up on the first attempt.
 - If an experiment takes > 30 minutes, launch it and continue with other fixes while waiting
 - Document EVERYTHING — the review log should be self-contained
 - Update project notes after each round, not just at the end
