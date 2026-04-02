@@ -5,14 +5,14 @@
 这是一个面向 **Codex** 的技能包目录，当前版本已经与主线 `skills/` 对齐：
 
 - 保留主线科研技能的同名同步集
-- 同步包含 `training-check`、`ablation-planner`、`result-to-claim`、`rebuttal`
+- 同步包含 `training-check`、`experiment-autotune-loop`、`ablation-planner`、`result-to-claim`、`rebuttal`
 - 同步包含 `mermaid-diagram`
 - 附带 `shared-references/`，但它**不计入 skill 数量**
 
 数量对比：
 
-- 主线 `skills/` 当前技能数：`39`
-- 本包技能数：`39`
+- 主线 `skills/` 当前技能数：`40`
+- 本包技能数：`40`
 - 另附支持目录：`shared-references/`
 
 本包路径结构是：

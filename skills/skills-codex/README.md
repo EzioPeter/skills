@@ -9,14 +9,16 @@ This package keeps the main `skills/` workflows available for OpenAI Codex CLI.
 Recent core workflow follow-up skills mirrored here include:
 
 - `training-check`
+- `experiment-autotune-loop`
 - `result-to-claim`
 - `ablation-planner`
 
 These skills cover the experiment follow-up chain:
 
 1. monitor training quality early
-2. judge what claims the results actually support
-3. design reviewer-facing ablations before paper writing
+2. keep a 24-hour monitor -> tune -> relaunch loop moving
+3. judge what claims the results actually support
+4. design reviewer-facing ablations before paper writing
 
 ## Install
 
