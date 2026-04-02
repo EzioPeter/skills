@@ -124,6 +124,7 @@ Two outputs: `PASTE_READY.txt` (exact char count, paste to venue) + `REBUTTAL_DR
 ```bash
 # 1. Install skills
 git clone https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep.git
+mkdir -p ~/.claude/skills/    # create if it doesn't exist (new Claude Code versions)
 cp -r Auto-claude-code-research-in-sleep/skills/* ~/.claude/skills/
 
 # 2. Set up Codex MCP (for review skills)
@@ -756,9 +757,14 @@ Got reviews back? `/rebuttal` parses them, builds a strategy, and drafts a venue
 
 ### Install Skills
 
+> 💡 **New Claude Code versions** may not auto-create `~/.claude/skills/`. If the directory doesn't exist, create it first: `mkdir -p ~/.claude/skills/`. This works alongside the new plugins system — both `skills/` and `plugins/` are loaded by Claude Code.
+
 ```bash
 git clone https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep.git
 cd Auto-claude-code-research-in-sleep
+
+# Create skills directory if it doesn't exist
+mkdir -p ~/.claude/skills/
 
 # Install all skills globally
 cp -r skills/* ~/.claude/skills/
@@ -767,6 +773,25 @@ cp -r skills/* ~/.claude/skills/
 cp -r skills/auto-review-loop ~/.claude/skills/
 cp -r skills/research-lit ~/.claude/skills/
 ```
+
+<details>
+<summary><b>Optional: Codex Plugin for Code Review</b></summary>
+
+[codex-plugin-cc](https://github.com/openai/codex-plugin-cc) provides `/codex:review` and `/codex:adversarial-review` for experiment code checking. This is **separate from** the Codex MCP used for paper review — the plugin only reviews code (git diff), not research content.
+
+```bash
+# In Claude Code:
+/plugin marketplace add openai/codex-plugin-cc
+/plugin install codex@openai-codex
+/reload-plugins
+/codex:setup
+```
+
+Use it when writing experiment code in Workflow 1.5 — e.g., `/codex:adversarial-review` after implementing your training script.
+
+> Note: ARIS's core cross-model review (paper scoring, idea evaluation, rebuttal stress test) still uses Codex MCP, which allows custom prompts. The plugin cannot replace this.
+
+</details>
 
 ### Update Skills
 
@@ -1416,6 +1441,7 @@ claude
 - [ ] **Workflow execution report** — after each workflow (1/1.5/2/3) completes, auto-generate a structured summary: what was done, key decisions made, experiments run, results obtained, scores, and time spent. Output as `WORKFLOW_REPORT.md` for progress tracking, team reporting, and supervisor updates
 - [x] **Document-based pipeline input** — `/idea-discovery` and `/research-pipeline` auto-detect `RESEARCH_BRIEF.md` in project root. Detailed context replaces one-line prompt. Template: `templates/RESEARCH_BRIEF_TEMPLATE.md`
 - [ ] **Auto hyperparameter tuning skill** — rewrite [auto-hparam-tuning](https://github.com/zxh0916/auto-hparam-tuning) as an ARIS SKILL.md. 5-step cycle: understand project → plan tuning strategy → run experiments → analyze metrics (TensorBoard/W&B) → learn and iterate. Would plug into Workflow 1.5 (`/experiment-bridge`) or Workflow 2 (`/auto-review-loop`) when reviewer says "tune hyperparameters"
+- [ ] **Plugin format** — package ARIS as a Claude Code Plugin for one-click install via `/plugin install aris`. Skills version continues for cross-platform compatibility (Codex CLI, Cursor, Trae, etc.)
 
 ## 💬 Community
 
